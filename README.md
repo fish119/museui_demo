@@ -1,4 +1,4 @@
-# museui
+# Vue Muse-UI
 
 > vue + muse-ui demo
 
