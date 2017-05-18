@@ -1,11 +1,17 @@
 <template>
   <div id="app">
-    <mu-appbar :zDepth="0" :class="{'nav-hide': !open}" class="appbar">
+    <mu-appbar v-if="!isLoginPage" :zDepth="0" :class="{'nav-hide': !open}" class="appbar">
       <mu-icon-button @click="toggleNav" icon="menu" slot="left"/>
-      <mu-icon-button slot="right" target="_blank" href="https://github.com/fish119/museui_demo" icon=":mudocs-icon-custom-github"/>
+      <!--<mu-icon-button slot="right" target="_blank" href="https://github.com/fish119/museui_demo" icon=":mudocs-icon-custom-github"/>-->
+      <mu-icon-button slot="right" icon="launch" @click="openDialog"/>
     </mu-appbar>
-    <app-nav @close="toggleNav" :open="open" :docked="docked"></app-nav>
-    <div class="content" :class="{'nav-hide': !open}">
+    <app-nav v-if="!isLoginPage" @close="toggleNav" :open="open" :docked="docked"></app-nav>
+    <mu-dialog :open="dialog" title="提醒">
+      是否要退出当前用户？
+      <mu-flat-button label="取消" slot="actions" primary @click="closeDialog"/>
+      <mu-flat-button label="确定" slot="actions" primary @click="logOut"/>
+    </mu-dialog>
+    <div class="content" :class="{'nav-hide': !open , 'login-page': isLoginPage}">
       <router-view></router-view>
     </div>
   </div>
@@ -24,7 +30,13 @@
         open: desktop,
         docked: desktop,
         desktop: desktop,
-        title: ''
+        title: '',
+        dialog: false
+      }
+    },
+    computed: {
+      isLoginPage(){
+        return this.$route.fullPath === '/login'
       }
     },
     methods: {
@@ -42,6 +54,16 @@
           this.open = true
         }
         this.desktop = desktop
+      },
+      openDialog(){
+        this.dialog = true
+      },
+      closeDialog(){
+        this.dialog = false
+      },
+      logOut(){
+        this.closeDialog()
+        this.$router.push('/login')
       }
     },
     mounted () {
@@ -65,8 +87,7 @@
 <style lang="less">
   @easeOutFunction: cubic-bezier(0.23, 1, 0.32, 1);
   @easeInOutFunction: cubic-bezier(0.445, 0.05, 0.55, 0.95);
-
-  .appbar{
+  .appbar {
     position: fixed;
     left: 256px;
     right: 0;
@@ -78,7 +99,7 @@
     }
   }
 
-  .content{
+  .content {
     padding-top: 56px;
     padding-left: 256px;
     transition: all .45s @easeOutFunction;
@@ -87,12 +108,12 @@
     }
   }
 
-  .content-wrapper{
+  .content-wrapper {
     padding: 48px 72px;
   }
 
   @media (min-width: 480px) {
-    .content{
+    .content {
       padding-top: 64px;
     }
   }
@@ -101,14 +122,17 @@
     .appbar {
       left: 0;
     }
-    .content{
+
+    .content {
       padding-left: 0;
     }
+
     .content-wrapper {
       padding: 24px 36px;
     }
   }
-  .home-page{
+
+  .login-page {
     padding: 0;
     .content {
       transition-duration: 0s;

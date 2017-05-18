@@ -2,13 +2,16 @@
   <mu-drawer :open="open" @close="handleClose" :docked="docked" :overlay="docked" :zDepth="1" class="app-drawer">
     <mu-appbar :zDepth="0" class="exmaples-nav-appbar">
       <a href="#/index" class="appbar-title">Fish119</a>
+      <mu-avatar slot="left" src="../../static/images/fish.png" backgroundColor="transparent"/>
     </mu-appbar>
 
   </mu-drawer>
 </template>
 
 <script>
+  import MuAvatar from "../../node_modules/muse-ui/src/avatar/avatar";
   export default {
+    components: { MuAvatar },
     props: {
       open: {
         type: Boolean,
